@@ -1,0 +1,93 @@
+﻿@using Models;
+@using BlazorStrap;
+
+<h3>Bug Details</h3>
+
+<BSModal IsCentered="true" DataId="model9" HideOnValidSubmit="true" @ref="modal">
+    <BSForm Model="SelectedBug" OnValidSubmit="@AddOrUpdate">
+        <DataAnnotationsValidator />
+        <BSModalHeader>@SelectedBug.Name</BSModalHeader>
+        <BSModalContent>
+            <BSValidationSummary />
+            <div class="mb-3">
+                <BSLabel>Name</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="SelectedBug.Name" />
+                <BSFeedback For="@(() => SelectedBug.Name)" />
+            </div>
+            <div class="mb-3">
+                <BSLabel>Description</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="SelectedBug.Description" />
+                <BSFeedback For="@(() => SelectedBug.Description)" />
+            </div>
+            <div>
+                <BSLabel>Assignees</BSLabel>
+                <ul class="list-group list-group-flush">
+                    @foreach (var assignee in SelectedBug.Assignees)
+                    {
+                        <li class="list-group-item">
+                            <BSRow Align="Align.Start">
+                                <BSCol Column="9">
+                                    @assignee
+                                </BSCol>
+                                <BSCol Column="2">
+                                    <BSButton Size="Size.Small" OnClick="() => RemoveAssignee(assignee)">Remove</BSButton>
+                                </BSCol>
+                            </BSRow>
+                        </li>
+                    }
+                </ul>
+                <BSInputGroup MarginBottom="Margins.Medium">
+                    <BSDropdown>
+                        <Toggler><BSToggle IsButton="true" IsOutlined="true" Color="BSColor.Secondary">Dropdown</BSToggle></Toggler>
+                        <Content>
+                            @foreach (var assignee in OtherAssignees)
+                            {
+                                <BSDropdownItem OnClick="() => AddAssignee(assignee)">@assignee</BSDropdownItem>
+                            }
+                        </Content>
+                    </BSDropdown>
+                </BSInputGroup>
+            </div>
+        </BSModalContent>
+        <BSModalFooter>
+            <BSButton Target="model9">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@code {
+    private Bug SelectedBug { get; set; }
+    BSModal? modal { get; set; }
+    private IEnumerable<string> OtherAssignees = new[] { "Mark", "Clive", "David" };
+
+    [Parameter]
+    public EventCallback<Bug> OnAddOrUpdate { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedBug = Bug.Empty();
+    }
+
+    public void Show(Bug selectedBug)
+    {
+        SelectedBug = selectedBug;
+        StateHasChanged();
+        modal!.ShowAsync();
+    }
+
+    private void AddAssignee(string assignee)
+    {
+        SelectedBug.Assignees = SelectedBug.Assignees.Union(new[] { assignee });
+    }
+
+    private void RemoveAssignee(string assignee)
+    {
+        SelectedBug.Assignees = SelectedBug.Assignees.Where(assigned => assigned != assignee);
+    }
+
+    private void AddOrUpdate()
+    {
+        OnAddOrUpdate.InvokeAsync(SelectedBug);
+    }
+}

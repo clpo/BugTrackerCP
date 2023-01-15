@@ -1,0 +1,34 @@
+﻿@using Models;
+@using BlazorStrap;
+
+<BSCard CardType="CardType.Card" style="width: 18rem;" onclick="@OnClick">
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Title">@CurrentBug.Name</BSCard>
+        <BSCard CardType="CardType.Text">
+            @CurrentBug.Description
+        </BSCard>
+        <BSCard CardType="CardType.Text">
+            @CurrentBug.Created
+        </BSCard>
+        <ul class="list-group list-group-flush">
+            @foreach (var assignee in CurrentBug.Assignees.Take(3))
+        {
+            <li class="list-group-item">@assignee</li>
+        }
+        </ul>
+        <BSButton Color="BSColor.Primary">Go Somewhere</BSButton>
+    </BSCard>
+</BSCard>
+
+@code {
+    [Parameter]
+    public Bug CurrentBug { get; set; }
+
+    [Parameter]
+    public EventCallback<Bug> OnClickCallback { get; set; }
+
+    public void OnClick()
+    {
+        OnClickCallback.InvokeAsync(CurrentBug);
+    }
+}
