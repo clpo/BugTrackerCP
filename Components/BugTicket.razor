@@ -13,7 +13,7 @@
         <ul class="list-group list-group-flush">
             @foreach (var assignee in CurrentBug.Assignees.Take(3))
         {
-            <li class="list-group-item">@assignee</li>
+            <li class="list-group-item">@assignee.Name</li>
         }
         </ul>
         <BSButton Color="BSColor.Primary">Go Somewhere</BSButton>

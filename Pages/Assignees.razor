@@ -1,0 +1,75 @@
+﻿@page "/assignees"
+@using Models;
+@using BlazorStrap;
+@using Components;
+@using Services;
+@inject IAssigneesService AssigneesService;
+
+<h3>Assignees</h3>
+
+<BSModal IsCentered="true" DataId="model9" HideOnValidSubmit="true" @ref="modal">
+    <BSForm Model="Assignee" OnValidSubmit="@Add">
+        <DataAnnotationsValidator />
+        <BSModalHeader>Add new Assignee</BSModalHeader>
+        <BSModalContent>
+            <BSValidationSummary />
+            <div class="mb-3">
+                <BSLabel>Name</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="Assignee.Name" />
+                <BSFeedback For="@(() => Assignee.Name)" />
+            </div>
+        </BSModalContent>
+        <BSModalFooter>
+            <BSButton Target="model9">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+<BSRow Align="Align.Center" MarginBottom="Margins.Medium">
+    <BSButton Size="Size.Small" OnClick="() => ShowAddModal()">Add</BSButton>
+</BSRow>
+
+<BSListGroup>
+    @foreach (var assignee in AllAssignees)
+    {
+        <BSRow>
+            <BSCol Column="9"><BSListGroupItem>@assignee.Name</BSListGroupItem></BSCol>
+            <BSCol Column="2">
+                <BSButton Size="Size.Small" OnClick="() => Remove(assignee.Id)">Remove</BSButton>
+            </BSCol>
+        </BSRow>
+    }
+</BSListGroup>
+
+@code {
+    private IEnumerable<Assignee> AllAssignees;
+    private Assignee Assignee = new Assignee("");
+    private BSModal? modal;
+
+    private void ShowAddModal()
+    {
+        Assignee = new Assignee("");
+        modal!.ShowAsync();
+    }
+
+    private void Add()
+    {
+        AllAssignees = AllAssignees.Union(new[] { Assignee });
+    }
+
+    private void Remove(Guid id)
+    {
+        AllAssignees = AllAssignees.Where(x => x.Id != id);
+    }
+
+    private async Task<IEnumerable<Assignee>> GetAssignees()
+    {
+        return await AssigneesService.Get();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllAssignees = await GetAssignees();
+    }
+}

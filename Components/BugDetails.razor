@@ -27,10 +27,10 @@
                         <li class="list-group-item">
                             <BSRow Align="Align.Start">
                                 <BSCol Column="9">
-                                    @assignee
+                                    @assignee.Name
                                 </BSCol>
                                 <BSCol Column="2">
-                                    <BSButton Size="Size.Small" OnClick="() => RemoveAssignee(assignee)">Remove</BSButton>
+                                    <BSButton Size="Size.Small" OnClick="() => RemoveAssignee(assignee.Id)">Remove</BSButton>
                                 </BSCol>
                             </BSRow>
                         </li>
@@ -42,7 +42,7 @@
                         <Content>
                             @foreach (var assignee in OtherAssignees)
                             {
-                                <BSDropdownItem OnClick="() => AddAssignee(assignee)">@assignee</BSDropdownItem>
+                                <BSDropdownItem OnClick="() => AddAssignee(assignee.Id)">@assignee</BSDropdownItem>
                             }
                         </Content>
                     </BSDropdown>
@@ -59,7 +59,7 @@
 @code {
     private Bug SelectedBug { get; set; }
     BSModal? modal { get; set; }
-    private IEnumerable<string> OtherAssignees = new[] { "Mark", "Clive", "David" };
+    private IEnumerable<Assignee> OtherAssignees = new[] { new Assignee("Mark"), new Assignee("Clive"), new Assignee("David") };
 
     [Parameter]
     public EventCallback<Bug> OnAddOrUpdate { get; set; }
@@ -76,14 +76,14 @@
         modal!.ShowAsync();
     }
 
-    private void AddAssignee(string assignee)
+    private void AddAssignee(Guid id)
     {
-        SelectedBug.Assignees = SelectedBug.Assignees.Union(new[] { assignee });
+        SelectedBug.Assignees = SelectedBug.Assignees.Union(OtherAssignees.Where(assignee => assignee.Id == id));
     }
 
-    private void RemoveAssignee(string assignee)
+    private void RemoveAssignee(Guid id)
     {
-        SelectedBug.Assignees = SelectedBug.Assignees.Where(assigned => assigned != assignee);
+        SelectedBug.Assignees = SelectedBug.Assignees.Where(assigned => assigned.Id != id);
     }
 
     private void AddOrUpdate()

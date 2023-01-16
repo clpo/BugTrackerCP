@@ -2,6 +2,8 @@
 @using Models;
 @using BlazorStrap;
 @using Components;
+@using Services;
+@inject IBugsService BugsService;
 
 <h3>Bugs</h3>
 <BugTrackerCP.Components.BugDetails OnAddOrUpdate="(Bug bug) => OnAddOrUpdate(bug)" @ref="BugDetails"/>
@@ -29,44 +31,17 @@
 
     private void OnAddOrUpdate(Bug bug)
     {
-        
+
     }
 
-    protected override void OnInitialized()
+    private async Task<IEnumerable<Bug>> GetBugs()
     {
-        Console.WriteLine("Init");
-        CurrentBugs = new[] { 
-            new Bug() { 
-                Name = "Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            },
-            new Bug() { 
-                Name = "2Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            },
-            new Bug() { 
-                Name = "3Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            },
-            new Bug() { 
-                Name = "4Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            },
-            new Bug() { 
-                Name = "5Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            },
-            new Bug() { 
-                Name = "6Fix issue with something", 
-                Description = "We need to fix this thing because it is causing things",
-                Assignees = new[] { "Jeff", "John", "Chris", "Pete", "Michael" }
-            }
-    };
+        return await BugsService.Get();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentBugs = await GetBugs();
         SelectedBug = CurrentBugs.First();
     }
 }
