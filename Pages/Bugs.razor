@@ -4,14 +4,20 @@
 @using Components;
 @using Services;
 @inject IBugsService BugsService;
+@inject IAssigneesService AssigneesService;
 
 <h3>Bugs</h3>
 <BugTrackerCP.Components.BugDetails OnAddOrUpdate="(Bug bug) => OnAddOrUpdate(bug)" @ref="BugDetails"/>
+
+<BSRow Align="Align.Center" MarginBottom="Margins.Medium">
+    <BSButton Size="Size.Small" OnClick="() => OnCardClick(Bug.Empty())">Add</BSButton>
+</BSRow>
+
 <div>
     <BSRow>
         @foreach (var bug in CurrentBugs)
         {
-            <BugTrackerCP.Components.BugTicket CurrentBug="@bug" OnClickCallback="(Bug bug) => OnCardClick(bug)"/>
+            <BugTrackerCP.Components.BugTicket CurrentBug="@bug" OnClickCallback="(Bug bug) => OnCardClick(bug)" OnDeleteClickCallback="(Bug bug) => OnCardDeleteClicked(bug)"/>
         }
     </BSRow>
 </div>
@@ -22,15 +28,24 @@
     private IEnumerable<Bug> CurrentBugs { get; set; } = new List<Bug>();
     private Bug SelectedBug { get; set; }
     private BugDetails? BugDetails { get; set; }
+    private IEnumerable<Assignee> AllAssignees;
 
     private void OnCardClick(Bug selectedBug)
     {
         SelectedBug = selectedBug;
-        BugDetails!.Show(selectedBug);
+        BugDetails!.Show(selectedBug, AllAssignees);
+    }
+
+    private async void OnCardDeleteClicked(Bug selectedBug)
+    {
+        CurrentBugs = CurrentBugs.Where(bug => bug.Id != selectedBug.Id);
+        await BugsService.Delete(selectedBug.Id);
+        StateHasChanged();
     }
 
     private async Task OnAddOrUpdate(Bug bug)
     {
+        CurrentBugs = CurrentBugs.Union(new[] { bug });
         await BugsService.Create(bug);
         StateHasChanged();
     }
@@ -40,9 +55,15 @@
         return await BugsService.Get();
     }
 
+    private async Task<IEnumerable<Assignee>> GetAssignees()
+    {
+        return await AssigneesService.Get();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         CurrentBugs = await GetBugs();
         SelectedBug = CurrentBugs.First();
+        AllAssignees = await GetAssignees();
     }
 }

@@ -43,7 +43,7 @@
 </BSListGroup>
 
 @code {
-    private IEnumerable<Assignee> AllAssignees;
+    private IEnumerable<Assignee> AllAssignees = new List<Assignee>();
     private Assignee Assignee = new Assignee("");
     private BSModal? modal;
 

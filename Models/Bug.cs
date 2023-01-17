@@ -13,13 +13,13 @@ namespace BugTrackerCP.Models
 
         public Bug()
         {
-            Id = Guid.Empty;
+            Id = Guid.NewGuid();
             Name = string.Empty;
             Description = string.Empty;
-            Created = DateTime.MinValue;
-            LastUpdated = DateTime.MinValue;
+            Created = DateTime.Now;
+            LastUpdated = DateTime.Now;
             Assignees = new List<Assignee>();
-            Status = string.Empty;
+            Status = "Open";
         }
 
         public static Bug Empty() { return new Bug(); }

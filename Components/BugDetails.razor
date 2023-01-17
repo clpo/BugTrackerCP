@@ -42,7 +42,7 @@
                         <Content>
                             @foreach (var assignee in OtherAssignees)
                             {
-                                <BSDropdownItem OnClick="() => AddAssignee(assignee.Id)">@assignee</BSDropdownItem>
+                                <BSDropdownItem OnClick="() => AddAssignee(assignee.Id)">@assignee.Name</BSDropdownItem>
                             }
                         </Content>
                     </BSDropdown>
@@ -57,9 +57,9 @@
 </BSModal>
 
 @code {
-    private Bug SelectedBug { get; set; }
+    private Bug SelectedBug { get; set; } = Bug.Empty();
     BSModal? modal { get; set; }
-    private IEnumerable<Assignee> OtherAssignees = new[] { new Assignee("Mark"), new Assignee("Clive"), new Assignee("David") };
+    private IEnumerable<Assignee> OtherAssignees = new List<Assignee>();
 
     [Parameter]
     public EventCallback<Bug> OnAddOrUpdate { get; set; }
@@ -69,9 +69,10 @@
         SelectedBug = Bug.Empty();
     }
 
-    public void Show(Bug selectedBug)
+    public void Show(Bug selectedBug, IEnumerable<Assignee> otherAssignees)
     {
         SelectedBug = selectedBug;
+        OtherAssignees = otherAssignees;
         StateHasChanged();
         modal!.ShowAsync();
     }

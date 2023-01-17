@@ -16,7 +16,7 @@
             <li class="list-group-item">@assignee.Name</li>
         }
         </ul>
-        <BSButton Color="BSColor.Primary">Go Somewhere</BSButton>
+        <BSButton Color="BSColor.Primary" OnClick="OnDeleteClick">Delete</BSButton>
     </BSCard>
 </BSCard>
 
@@ -27,8 +27,16 @@
     [Parameter]
     public EventCallback<Bug> OnClickCallback { get; set; }
 
+    [Parameter]
+    public EventCallback<Bug> OnDeleteClickCallback { get; set; }
+
     public void OnClick()
     {
         OnClickCallback.InvokeAsync(CurrentBug);
+    }
+
+    public void OnDeleteClick()
+    {
+        OnDeleteClickCallback.InvokeAsync(CurrentBug);
     }
 }
