@@ -1,5 +1,6 @@
 ﻿using BugTrackerCP.Models;
 using System.Net.Http.Json;
+using static System.Net.WebRequestMethods;
 
 namespace BugTrackerCP.Services
 {
@@ -19,23 +20,20 @@ namespace BugTrackerCP.Services
             _httpClient = httpClient;
         }
 
-        public Task Create(Bug bug)
+        public async Task Create(Bug bug)
         {
-            //await _httpClient.PostAsJsonAsync("", bug);
-            return Task.CompletedTask;
+            await _httpClient.PostAsJsonAsync("bug", bug);
         }
 
-        public Task Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            //await _httpClient.DeleteAsync("");
-            return Task.CompletedTask;
+            await _httpClient.DeleteAsync($"bug/{id}");
         }
 
-        public Task<IEnumerable<Bug>> Get()
+        public async Task<IEnumerable<Bug>> Get()
         {
-            //var result = await _httpClient.GetFromJsonAsync<IEnumerable<Bug>>("");
-
-            return Task.FromResult(StubResults);
+            var result = await _httpClient.GetFromJsonAsync<IEnumerable<Bug>>("bug");
+            return result;
         }
 
         private IEnumerable<Bug> StubResults = new[] {

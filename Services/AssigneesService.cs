@@ -19,23 +19,20 @@ namespace BugTrackerCP.Services
             _httpClient = httpClient;
         }
 
-        public Task Create(Assignee assignee)
+        public async Task Create(Assignee assignee)
         {
-            //await _httpClient.PostAsJsonAsync("", assignee);
-            return Task.CompletedTask;
+            await _httpClient.PostAsJsonAsync("assignee", assignee);
         }
 
-        public Task Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            //await _httpClient.DeleteAsync("");
-            return Task.CompletedTask;
+            await _httpClient.DeleteAsync($"assignee/{id}");
         }
 
-        public Task<IEnumerable<Assignee>> Get()
+        public async Task<IEnumerable<Assignee>> Get()
         {
-            //var result = await _httpClient.GetFromJsonAsync<IEnumerable<Assignee>>("");
-
-            return Task.FromResult(StubAssigneesResult);
+            var result = await _httpClient.GetFromJsonAsync<IEnumerable<Assignee>>("assignee");
+            return result;
         }
 
         private IEnumerable<Assignee> StubAssigneesResult = new[] { new Assignee("Jeff"), new Assignee("John"), new Assignee("Chris"), new Assignee("Pete"), new Assignee("Jane") };

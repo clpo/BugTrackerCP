@@ -29,9 +29,10 @@
         BugDetails!.Show(selectedBug);
     }
 
-    private void OnAddOrUpdate(Bug bug)
+    private async Task OnAddOrUpdate(Bug bug)
     {
-
+        await BugsService.Create(bug);
+        StateHasChanged();
     }
 
     private async Task<IEnumerable<Bug>> GetBugs()

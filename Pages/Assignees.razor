@@ -53,14 +53,18 @@
         modal!.ShowAsync();
     }
 
-    private void Add()
+    private async Task Add()
     {
         AllAssignees = AllAssignees.Union(new[] { Assignee });
+        await AssigneesService.Create(Assignee);
+        StateHasChanged();
     }
 
-    private void Remove(Guid id)
+    private async Task Remove(Guid id)
     {
         AllAssignees = AllAssignees.Where(x => x.Id != id);
+        await AssigneesService.Delete(id);
+        StateHasChanged();
     }
 
     private async Task<IEnumerable<Assignee>> GetAssignees()
